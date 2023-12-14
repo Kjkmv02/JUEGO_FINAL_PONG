@@ -1,3 +1,4 @@
+
 import turtle
 import winsound
 
@@ -14,7 +15,7 @@ def cambiar_forma_y_color_pelota(pelota, forma, color):
 ventana = turtle.Screen()
 ventana.title("Pong")
 ventana.bgcolor("black")
-ventana.setup(width=800, height=600)
+ventana.setup(width=1920, height=1080)
 
 # Crea dos objetos Turtle para ingresar los nombres
 nombre1_input = turtle.textinput("INGRESAR", "JUGADOR 1:")
@@ -25,7 +26,7 @@ nombre1 = nombre1_input
 nombre2 = nombre2_input
 
 # Menú de selección de forma y color de la pelota
-forma_pelota = ventana.textinput("Configurar pelota", "Ingresa la forma de la pelota (circle, square, triangle):")
+forma_pelota = ventana.textinput("Configurar pelota", "Ingresa la forma de la pelota (circle, square, triangle, etc.):")
 color_pelota = ventana.textinput("Configurar pelota", "Ingresa el color de la pelota (ej. white):")
 
 # Menú de selección de color de las paletas
@@ -38,7 +39,7 @@ pared_izquierda.shape("square")
 cambiar_color_pared(pared_izquierda, color_pared)
 pared_izquierda.shapesize(stretch_wid=5, stretch_len=1)
 pared_izquierda.penup()
-pared_izquierda.goto(-350, 0)
+pared_izquierda.goto(-950, 0)
 
 # Pared derecha
 pared_derecha = turtle.Turtle()
@@ -47,7 +48,7 @@ pared_derecha.shape("square")
 cambiar_color_pared(pared_derecha, color_pared)
 pared_derecha.shapesize(stretch_wid=5, stretch_len=1)
 pared_derecha.penup()
-pared_derecha.goto(350, 0)
+pared_derecha.goto(935, 0)
 
 # Pelota en forma de círculo
 pelota = turtle.Turtle()
@@ -66,37 +67,39 @@ marcador.speed(0)
 marcador.color("white")
 marcador.penup()
 marcador.hideturtle()
-marcador.goto(0, 260)
+marcador.goto(0, 450)
 marcador.write(f"{nombre1}: 0   {nombre2}: 0", align="center", font=("Courier", 24, "normal"))
 
 # Funciones para mover las paredes arriba y abajo
 def pared_izquierda_arriba():
     y = pared_izquierda.ycor()
-    y += 20
-    pared_izquierda.sety(y)
+    if y < 400:
+        y += 20
+        pared_izquierda.sety(y)
 
 def pared_izquierda_abajo():
     y = pared_izquierda.ycor()
-    y -= 20
-    pared_izquierda.sety(y)
+    if y > -380:
+        y -= 20
+        pared_izquierda.sety(y)
 
 def pared_derecha_arriba():
     y = pared_derecha.ycor()
-    y += 20
-    pared_derecha.sety(y)
+    if y < 400:
+        y += 20
+        pared_derecha.sety(y)
 
 def pared_derecha_abajo():
     y = pared_derecha.ycor()
-    y -= 20
-    pared_derecha.sety(y)
+    if y > -380:
+        y -= 20
+        pared_derecha.sety(y)
 
 # Esta línea de código indica que el juego está escuchando eventos del teclado.
 # Esto es necesario para que el juego pueda "capturar" las teclas que el usuario está presionando.
 ventana.listen()
 ventana.onkeypress(pared_izquierda_arriba, "w")
 ventana.onkeypress(pared_izquierda_abajo, "s")
-ventana.onkeypress(pared_izquierda_arriba, "W")
-ventana.onkeypress(pared_izquierda_abajo, "S")
 ventana.onkeypress(pared_derecha_arriba, "Up")
 ventana.onkeypress(pared_derecha_abajo, "Down")
 
@@ -106,7 +109,7 @@ velocidad_pelota = 2
 # Función para aumentar la velocidad de la pelota
 def aumentar_velocidad():
     global velocidad_pelota
-    velocidad_pelota += 0.5
+    velocidad_pelota += 0
 
 # Bucle principal del juego
 while True:
@@ -117,11 +120,12 @@ while True:
     pelota.sety(pelota.ycor() + pelota.dy * velocidad_pelota)
 
     # Comprobación de bordes para las paredes superior e inferior
-    if pelota.ycor() > 290 or pelota.ycor() < -290:
+    if pelota.ycor() > 490 or pelota.ycor() < -490:
         pelota.dy *= -1
+        winsound.PlaySound("boing.wav", winsound.SND_ASYNC)  # Reemplaza "boing.wav" con tu efecto de sonido
 
     # Comprobación de bordes para las paredes izquierda y derecha
-    if pelota.xcor() > 390:
+    if pelota.xcor() > 940:
         pelota.goto(0, 0)
         pelota.dx *= -1
         puntaje_izquierda += 1
@@ -129,7 +133,7 @@ while True:
         marcador.clear()
         marcador.write(f"{nombre1}: {puntaje_izquierda}   {nombre2}: {puntaje_derecha}", align="center", font=("Courier", 24, "normal"))
 
-    if pelota.xcor() < -390:
+    if pelota.xcor() < -940:
         pelota.goto(0, 0)
         pelota.dx *= -1
         puntaje_derecha += 1
@@ -138,18 +142,12 @@ while True:
         marcador.write(f"{nombre1}: {puntaje_izquierda}   {nombre2}: {puntaje_derecha}", align="center", font=("Courier", 24, "normal"))
 
     # Detección de colisión entre la pelota y las paredes izquierda y derecha
-    if (
-        -350 < pelota.xcor() < -340
-        and pared_izquierda.ycor() + 50 > pelota.ycor() > pared_izquierda.ycor() - 50
-    ):
-        pelota.dx *= -1
-        winsound.PlaySound("boing.wav", winsound.SND_ASYNC)  
-
-    if (
-        340 < pelota.xcor() < 350
-        and pared_derecha.ycor() + 50 > pelota.ycor() > pared_derecha.ycor() - 50
-    ):
-        pelota.dx *= -1
-        winsound.PlaySound("boing.wav", winsound.SND_ASYNC)  
+    if (     
+        pelota.xcor() > 930 and pelota.distance(pared_derecha) < 50 
+    ) or (     
+        pelota.xcor() < -930 and pelota.distance(pared_izquierda) < 50 
+    ):     
+        pelota.dx *= -1    
+        winsound.PlaySound("boing.wav", winsound.SND_ASYNC)  # Reemplaza "boing.wav" con tu efecto de sonido
 
 ventana.bye()
